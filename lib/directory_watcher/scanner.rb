@@ -54,7 +54,16 @@ class DirectoryWatcher::Scanner
 
     @stop = true
     @thread.wakeup if @thread.status == 'sleep'
-    @thread.join
+    self
+  end
+  
+  # Kill the scanner thread.  See stop for graceful shutdown
+  #
+  def stop!
+    return unless running?
+
+    @stop = true
+    Thread.kill(@thread)
     self
   ensure
     @thread = nil
